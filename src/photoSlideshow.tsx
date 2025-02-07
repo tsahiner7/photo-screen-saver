@@ -10,10 +10,10 @@ import { closeWindow, delay, getRandom, shuffle } from "./utils"
 
 // Choose the source for the photos you want to display:
 type GetPhotosFn = typeof getFlickrPhotos | typeof getUnsplashPhotos | typeof getLocalPhotos
-const GET_PHOTOS: GetPhotosFn = getUnsplashPhotos
+const GET_PHOTOS: GetPhotosFn = getLocalPhotos
 
 // Keep these in sync with photoSlideshow.module.scss:
-const PHOTO_INTERVAL = 60
+const PHOTO_INTERVAL = 30
 const FADE_IN_DURATION = 5
 
 const SECONDS = 1000
