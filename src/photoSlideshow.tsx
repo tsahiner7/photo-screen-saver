@@ -13,8 +13,8 @@ type GetPhotosFn = typeof getFlickrPhotos | typeof getUnsplashPhotos | typeof ge
 const GET_PHOTOS: GetPhotosFn = getLocalPhotos
 
 // Keep these in sync with photoSlideshow.module.scss:
-const PHOTO_INTERVAL = 30
-const FADE_IN_DURATION = 5
+const PHOTO_INTERVAL = 10
+const FADE_IN_DURATION = 4
 
 const SECONDS = 1000
 
