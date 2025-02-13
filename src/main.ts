@@ -1,6 +1,6 @@
 import { app, BrowserWindow, dialog } from "electron"
 import path from "path"
-
+import { LOCAL_FOLDER_PATH } from "./constants"
 // When running in true screen saver mode, the Chromium GPU process crashes for some reason.
 // We work around this problem by specifying this flag to run the GPU thread in-process.
 app.commandLine.appendSwitch("in-process-gpu")
@@ -10,6 +10,8 @@ app.on("window-all-closed", () =>
 {
    app.quit()
 })
+
+let USER_SELECTION = "" //Globally sotred folder path
 
 app.on("ready", () =>
 {
@@ -33,13 +35,29 @@ app.on("ready", () =>
       }
 
       // dialog.showMessageBox({ message: process.argv.join("\n"), buttons: ["OK"] })
+   } 
+
+
+   //////////    MY SIDE    //////////
+
+   const selectedFolder = dialog.showOpenDialogSync({
+      properties: ["openDirectory"]
+   })
+   if (selectedFolder) {
+      USER_SELECTION = selectedFolder[0] // store the path in the global variable
+      console.log("Selected Folder:", USER_SELECTION)
+   } else {
+      console.log("User cancelled the selection. Using default folder:", LOCAL_FOLDER_PATH)
    }
 
    const mainWindow = new BrowserWindow({
       show: false,
       autoHideMenuBar: true,
       backgroundColor: "#000",
-      webPreferences: { sandbox: false, preload: path.join(__dirname, "preload.js") },
+      webPreferences: { sandbox: false
+                        , preload: path.join(__dirname, "preload.js")
+                        , additionalArguments: [`--folderPath=${USER_SELECTION}`]  // Pass folder path as an argument 
+      },
    })
 
    // We have to delay the following operations for a few seconds, otherwise the page doesn't get
