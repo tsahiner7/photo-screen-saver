@@ -40,8 +40,8 @@ module.exports = function (grunt) {
                name: "photo-screen-saver",
                dir: "build",
                out: "package",
-               platform: "win32",
-               arch: "x64",
+               platform: "darwin",
+               arch: "arm64",
                overwrite: true
             }
          }
