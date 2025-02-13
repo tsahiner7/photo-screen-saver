@@ -1,13 +1,15 @@
 import fs from "fs"
 import { contextBridge } from "electron"
-import { LOCAL_FOLDER_PATH } from "./constants"
 import { Photo } from "./photo"
 
 contextBridge.exposeInMainWorld("api", { getLocalPhotos })
 
 function getLocalPhotos(): Photo[]
 {
-   let folderPath = LOCAL_FOLDER_PATH
+   const folderArg = process.argv.find(arg => arg.startsWith("--local-folder-path=")) ?? ""
+   
+   let folderPath = folderArg.replace("--local-folder-path=", "") 
+
    if(!folderPath.endsWith("/"))
       folderPath += "/"
 

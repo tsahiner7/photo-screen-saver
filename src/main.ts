@@ -35,11 +35,21 @@ app.on("ready", () =>
       // dialog.showMessageBox({ message: process.argv.join("\n"), buttons: ["OK"] })
    }
 
+   const selectedFolder = dialog.showOpenDialogSync({properties: ["openDirectory"]}) ?? []
+
+   if (selectedFolder.length === 0) {
+      app.quit()
+   }
+
    const mainWindow = new BrowserWindow({
       show: false,
       autoHideMenuBar: true,
       backgroundColor: "#000",
-      webPreferences: { sandbox: false, preload: path.join(__dirname, "preload.js") },
+      webPreferences: { 
+         sandbox: false, 
+         preload: path.join(__dirname, "preload.js"), 
+         additionalArguments: [`--local-folder-path=${selectedFolder[0]}`], 
+      },
    })
 
    // We have to delay the following operations for a few seconds, otherwise the page doesn't get
