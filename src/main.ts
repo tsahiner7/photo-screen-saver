@@ -35,12 +35,20 @@ app.on("ready", () =>
       // dialog.showMessageBox({ message: process.argv.join("\n"), buttons: ["OK"] })
    }
 
+   // TODO: Check for saved folder path here...
+
+   // TODO: If saved folder path exists, just pass it along...
+
+   // TODO: If saved folder path DOES NOT exist, then show the dialog to allow the user to select it...
+
    const selectedFolder = dialog.showOpenDialogSync({properties: ["openDirectory"]}) ?? []
 
    if (selectedFolder.length === 0) {
       app.quit()
    }
 
+   // TODO: Save the chosen folder path to some sort of storage (???)...
+ 
    const mainWindow = new BrowserWindow({
       show: false,
       autoHideMenuBar: true,
