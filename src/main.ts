@@ -1,5 +1,8 @@
 import { app, BrowserWindow, dialog } from "electron"
 import path from "path"
+import Store from "electron-store"
+
+const store = new Store() 
 
 // When running in true screen saver mode, the Chromium GPU process crashes for some reason.
 // We work around this problem by specifying this flag to run the GPU thread in-process.
@@ -36,18 +39,21 @@ app.on("ready", () =>
    }
 
    // TODO: Check for saved folder path here...
+   let selectedFolderPath = store.get("folderPath", "") 
 
    // TODO: If there is a saved folder path, and it exists, just pass it along...
-
    // TODO: If there isn't a saved folder path or it does not exist, then show the dialog to allow the user to select it...
 
-   const selectedFolder = dialog.showOpenDialogSync({properties: ["openDirectory"]}) ?? []
-
-   if (selectedFolder.length === 0) {
-      app.quit()
+   if (!selectedFolderPath || !require("fs").existsSync(selectedFolderPath)) {
+      const selectedFolder = dialog.showOpenDialogSync({properties: ["openDirectory"]}) ?? []
+      if (selectedFolder.length === 0) {
+         app.quit()
+      }
+      selectedFolderPath = selectedFolder[0]
    }
 
    // TODO: Save the chosen folder path to some sort of storage (???)...
+   store.set("folderPath", selectedFolderPath)
  
    const mainWindow = new BrowserWindow({
       show: false,
@@ -56,7 +62,7 @@ app.on("ready", () =>
       webPreferences: { 
          sandbox: false, 
          preload: path.join(__dirname, "preload.js"), 
-         additionalArguments: [`--local-folder-path=${selectedFolder[0]}`], 
+         additionalArguments: [`--local-folder-path=${selectedFolderPath}`], 
       },
    })
 
