@@ -45,7 +45,6 @@
     "react-transition-group": "^4.4.5",
     "sass": "^1.76.0",
     "three": "^0.164.1",
-    "typescript": "^4.9.5",
     "unsplash-js": "^7.0.19"
   },
   "homepage": "./",
@@ -83,5 +82,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
   }
 }
