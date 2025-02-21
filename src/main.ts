@@ -1,8 +1,8 @@
 import { app, BrowserWindow, dialog } from "electron"
 import path from "path"
-import Store from "electron-store"
+import ElectronStore from "electron-store"
 
-const store = new Store() 
+const store = new ElectronStore() 
 
 // When running in true screen saver mode, the Chromium GPU process crashes for some reason.
 // We work around this problem by specifying this flag to run the GPU thread in-process.
