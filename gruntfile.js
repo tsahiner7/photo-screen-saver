@@ -15,7 +15,7 @@ module.exports = function (grunt) {
             },
          },
          compile_electron: {
-            command: "node ./node_modules/typescript/bin/tsc src/main.ts src/preload.ts --esModuleInterop --outDir build"
+            command: "node ./node_modules/typescript/bin/tsc src/main.ts src/preload.ts --esModuleInterop --skipLibCheck --outDir build"
          },
       },
 

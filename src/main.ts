@@ -35,11 +35,19 @@ app.on("ready", () =>
       // dialog.showMessageBox({ message: process.argv.join("\n"), buttons: ["OK"] })
    }
 
+   // TODO: Check for saved folder path here...
+
+   // TODO: If there is a saved folder path, and it exists, just pass it along...
+
+   // TODO: If there is not a saved folder path or it does not exist, then show the dialog to allow the user to select it...
+
    const selectedFolder = dialog.showOpenDialogSync({properties: ["openDirectory"]}) ?? []
 
    if (selectedFolder.length === 0) {
       app.quit()
    }
+
+   // TODO: Save the chosen folder path with electron-store here...
 
    const mainWindow = new BrowserWindow({
       show: false,
