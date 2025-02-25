@@ -1,6 +1,9 @@
 import { app, BrowserWindow, dialog } from "electron"
 import path from "path"
+import ElectronStore from "electron-store"
+import { existsSync } from "fs"
 
+const store = new ElectronStore()
 // When running in true screen saver mode, the Chromium GPU process crashes for some reason.
 // We work around this problem by specifying this flag to run the GPU thread in-process.
 app.commandLine.appendSwitch("in-process-gpu")
@@ -36,19 +39,23 @@ app.on("ready", () =>
    }
 
    // TODO: Check for saved folder path here...
-
+   let folderPath: string = store.get("folderPath") as string || ""
    // TODO: If there is a saved folder path, and it exists, just pass it along...
-
-   // TODO: If there is not a saved folder path or it does not exist, then show the dialog to allow the user to select it...
-
-   const selectedFolder = dialog.showOpenDialogSync({properties: ["openDirectory"]}) ?? []
-
-   if (selectedFolder.length === 0) {
-      app.quit()
+   if (folderPath && existsSync(folderPath)) {
+      console.log("Selected folder path: ", folderPath)
+   } else {
+      // TODO: If there is not a saved folder path or it does not exist, then show the dialog to allow the user to select it...
+      const selectedFolder: string[] = dialog.showOpenDialogSync({properties: ["openDirectory"]}) ?? []
+      if (selectedFolder.length === 0) {
+         console.log("No folder selected, exiting...")
+         app.quit()
+      }  
+      // TODO: Save the chosen folder path with electron-store here...
+      folderPath = selectedFolder[0]
+      store.set("folderPath", folderPath)
+      console.log("electron-store path:", store.get("folderPath"))
    }
-
-   // TODO: Save the chosen folder path with electron-store here...
-
+    
    const mainWindow = new BrowserWindow({
       show: false,
       autoHideMenuBar: true,
@@ -56,7 +63,7 @@ app.on("ready", () =>
       webPreferences: { 
          sandbox: false, 
          preload: path.join(__dirname, "preload.js"), 
-         additionalArguments: [`--local-folder-path=${selectedFolder[0]}`], 
+         additionalArguments: [`--local-folder-path=${folderPath}`], 
       },
    })
 
