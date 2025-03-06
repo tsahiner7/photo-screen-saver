@@ -57,7 +57,6 @@ app.on("ready", () =>
       const selectedFolder = dialog.showOpenDialogSync({ properties: ["openDirectory"] }) ?? []
       
       if (selectedFolder.length === 0) {
-         console.log("No folder selected, exiting...")
          app.quit()
          return
       }
@@ -67,8 +66,8 @@ app.on("ready", () =>
       if (!folderHasImages(folderPath)) {
          dialog.showMessageBoxSync({
             type: "error",
-            title: "Invalid Folder",
-            message: "The selected folder must contain only images. Please select a different folder.",
+            title: "Warning",
+            message: "This folder does not contain any JPG images.",
             buttons: ["OK"]
          })
          app.quit()
@@ -76,9 +75,6 @@ app.on("ready", () =>
       }
 
       store.set("folderPath", folderPath)
-
-      console.log("Selected folder path: ", folderPath)
-      console.log("electron-store path:", store.get("folderPath"))
    }
 
    const mainWindow = new BrowserWindow({
