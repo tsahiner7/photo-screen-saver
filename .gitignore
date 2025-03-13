@@ -3,3 +3,4 @@ build/
 graphic_design/
 node_modules/
 package/
+.DS_Store
