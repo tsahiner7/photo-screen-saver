@@ -22,7 +22,8 @@ module.exports = function (grunt) {
       copy: {
          toBuild: {
             files: [
-               { expand: true, cwd: "src", src: ["package.json"], dest: "build/" }
+               { expand: true, cwd: "src", src: ["package.json"], dest: "build/" },
+               { expand: true, cwd: ".", src: ["node_modules/**"], dest: "build/" },
             ]
          },
          toScr: {
@@ -42,7 +43,8 @@ module.exports = function (grunt) {
                out: "package",
                platform: "darwin",
                arch: "arm64",
-               overwrite: true
+               overwrite: true,
+               prune: false, // Ensures all dependencies are included
             }
          }
       },
