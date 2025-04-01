@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react"
+import { Modal, Button } from "react-bootstrap"
 
 const ElectronModal: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false)
 
   useEffect(() => {
     // Listen for the 'open-modal' event from the main process
+    console.log("Setting up open-modal listener...")
     window.electron.onShowModal(() => {
         console.log("Received open-modal message, opening modal")
-        setShow(true);
-    });
-  }, []);
+        setShow(true)
+    })
+  }, [])
 
   return (
     <Modal show={show} onHide={() => setShow(false)} centered>
@@ -24,7 +25,7 @@ const ElectronModal: React.FC = () => {
         </Button>
       </Modal.Footer>
     </Modal>
-  );
-};
+  )
+}
 
-export default ElectronModal;
+export default ElectronModal

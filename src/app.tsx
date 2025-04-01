@@ -5,6 +5,7 @@ import { DemoCanvas } from "./demoCanvas"
 import { DemoCss } from "./demoCss"
 import { DemoShader } from "./demoShader"
 import { DemoThreeJs } from "./demoThreeJs"
+import ElectronModal from "./ElectronModal"
 import styles from "./app.module.scss"
 
 // Choose the component you want to display in the screen saver:
@@ -51,6 +52,7 @@ export function App()
          onMouseMove={onMouseMove}
       >
          <SHOW_COMPONENT/>
+         <ElectronModal/>
       </div>
    )
 }

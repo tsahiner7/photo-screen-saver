@@ -15,6 +15,7 @@ app.on("window-all-closed", () =>
 
 app.on("ready", () =>
 {
+   console.log("App is ready")
    if(process.argv.length > 1)
    {
       // The /p option tells us to display the screen saver in the tiny preview window in the Screen Saver Settings dialog.
@@ -29,6 +30,7 @@ app.on("ready", () =>
       if((process.argv[1] === "/S")
       || process.argv[1].match(/^\/c/))
       {
+         console.log("Handling /S or /c argument")
          if (mainWindow) {
             console.log("Sending open-modal message to renderer")
             mainWindow.webContents.send("open-modal") // Send message to the renderer
