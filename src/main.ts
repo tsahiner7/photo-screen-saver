@@ -66,8 +66,8 @@ app.on("ready", () =>
       mainWindow!.loadFile("index.html")
       // mainWindow!.webContents.openDevTools()
 
-      mainWindow!.setKiosk(true)
-      mainWindow!.setAlwaysOnTop(true)
+      // mainWindow!.setKiosk(true)
+      // mainWindow!.setAlwaysOnTop(true)
       mainWindow!.show()
       // // Example in main.ts to trigger modal from main process
       // mainWindow!.webContents.send("open-modal")

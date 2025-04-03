@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { closeWindow } from "./utils"
+// import { closeWindow } from "./utils"
 import { PhotoSlideshow } from "./photoSlideshow"
 import { DemoCanvas } from "./demoCanvas"
 import { DemoCss } from "./demoCss"
@@ -51,8 +51,8 @@ export function App()
          ref={refRoot}
          className={styles.root}
          tabIndex={-1}
-         onClick={e => closeWindow()}
-         onKeyDown={e => closeWindow()}
+         // onClick={e => closeWindow()}
+         // onKeyDown={e => closeWindow()}
          onMouseMove={onMouseMove}
       >
          <SHOW_COMPONENT/>

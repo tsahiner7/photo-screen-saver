@@ -31,6 +31,7 @@ const ElectronModal: React.FC<ElectronModalProps> = ({
 
   // Function to handle modal close
   const handleClose = () => {
+    console.log("Siktir git!")
     setShow(false)
   }
 
