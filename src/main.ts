@@ -58,6 +58,7 @@ app.on("ready", () =>
       },
    })
 
+
    // We have to delay the following operations for a few seconds, otherwise the page doesn't get
    // loaded when running in true screen saver mode. (The "blank white window" problem.)
    setTimeout(() => 
@@ -68,5 +69,7 @@ app.on("ready", () =>
       mainWindow!.setKiosk(true)
       mainWindow!.setAlwaysOnTop(true)
       mainWindow!.show()
+      // // Example in main.ts to trigger modal from main process
+      // mainWindow!.webContents.send("open-modal")
    }, 3000)
 })

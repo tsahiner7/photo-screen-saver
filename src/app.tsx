@@ -15,7 +15,7 @@ const SHOW_COMPONENT: ShowComponent = PhotoSlideshow
 export function App()
 {
    const refRoot = useRef<HTMLDivElement>(null)
-   const refStartMousePos = useRef({ x: NaN, y: NaN })
+   // const refStartMousePos = useRef({ x: NaN, y: NaN })
 
    useEffect(() =>
    {
@@ -26,20 +26,24 @@ export function App()
    function onMouseMove(
       e: React.MouseEvent<HTMLDivElement>)
    {
-      if(isNaN(refStartMousePos.current.x))
-      {
-         refStartMousePos.current = { x: e.pageX, y: e.pageY }
-      }
-      else
-      {
-         // Don't close the window on tiny movements of the mouse (from vibrations, for example).
-         const moveThreshold = window.screen.width * 0.02
-         if((Math.abs(e.pageX - refStartMousePos.current.x) > moveThreshold)
-         || (Math.abs(e.pageY - refStartMousePos.current.y) > moveThreshold))
-         {
-            closeWindow()
-         }
-      }
+      if (window.showModal) {
+         window.showModal()
+       }
+
+      // if(isNaN(refStartMousePos.current.x))
+      // {
+      //    refStartMousePos.current = { x: e.pageX, y: e.pageY }
+      // }
+      // else
+      // {
+      //    // Don't close the window on tiny movements of the mouse (from vibrations, for example).
+      //    const moveThreshold = window.screen.width * 0.02
+      //    if((Math.abs(e.pageX - refStartMousePos.current.x) > moveThreshold)
+      //    || (Math.abs(e.pageY - refStartMousePos.current.y) > moveThreshold))
+      //    {
+      //       closeWindow()
+      //    }
+      // }
    }
 
    return (

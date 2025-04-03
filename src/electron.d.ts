@@ -5,6 +5,8 @@ declare global {
         onShowModal: (callback: () => void) => void
         showDialog: () => void
       }
+      showModal?: () => void; // Add this line
+      api?: any;
     }
   }
   
