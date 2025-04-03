@@ -1,5 +1,8 @@
 import { app, BrowserWindow, dialog } from "electron"
 import path from "path"
+import Store from "electron-store"
+import { existsSync, readdirSync, statSync } from "fs"
+import { extname } from "path"
 
 let mainWindow: BrowserWindow | null = null
 
@@ -41,10 +44,43 @@ app.on("ready", () =>
       // dialog.showMessageBox({ message: process.argv.join("\n"), buttons: ["OK"] })
    }
 
-   const selectedFolder = dialog.showOpenDialogSync({properties: ["openDirectory"]}) ?? []
+   // TODO: If there is not a saved folder path or it does not exist, then show the dialog to allow the user to select it...   
+   const VALID_IMAGE_EXTENSIONS = [".jpg", ".jpeg"]
+   function folderHasImages(folderPath: string): boolean {
+      const files = readdirSync(folderPath)
+         .filter(file => !file.startsWith(".")) // to ignore hidden files
+         .map(file => path.join(folderPath, file))
+         .filter(fullPath => existsSync(fullPath) && statSync(fullPath).isFile())
 
-   if (selectedFolder.length === 0) {
-      app.quit()
+      return files.length > 0 && files.every(file => VALID_IMAGE_EXTENSIONS.includes(extname(file).toLowerCase()))
+   }
+   // TODO: Check for saved folder path here...
+   const store = new Store()
+   let folderPath: string = store.get("folderPath") as string || ""
+
+   // TODO: If there is a saved folder path, and it exists, just pass it along...
+   if (!folderPath || !existsSync(folderPath) || !folderHasImages(folderPath)) {
+      const selectedFolder = dialog.showOpenDialogSync({ properties: ["openDirectory"] }) ?? []
+      
+      if (selectedFolder.length === 0) {
+         app.quit()
+         return
+      }
+
+      folderPath = selectedFolder[0]
+      
+      if (!folderHasImages(folderPath)) {
+         dialog.showMessageBoxSync({
+            type: "error",
+            title: "Warning",
+            message: "This folder does not contain any JPG images.",
+            buttons: ["OK"]
+         })
+         app.quit()
+         return
+      }
+
+      store.set("folderPath", folderPath)
    }
 
    mainWindow = new BrowserWindow({
@@ -54,7 +90,7 @@ app.on("ready", () =>
       webPreferences: { 
          sandbox: false, 
          preload: path.join(__dirname, "preload.js"), 
-         additionalArguments: [`--local-folder-path=${selectedFolder[0]}`], 
+         additionalArguments: [`--local-folder-path=${folderPath}`], 
       },
    })
 
