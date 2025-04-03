@@ -1,6 +1,16 @@
 import fs from "fs"
 import { contextBridge, ipcRenderer } from "electron"
 import { Photo } from "./photo"
+import Store from "electron-store"
+
+// Create a store instance
+const store = new Store()
+
+// Expose the store to the renderer process
+contextBridge.exposeInMainWorld("electronStore", {
+  get: (key: string) => store.get(key),
+  set: (key: string, value: string) => store.set(key, value)
+})
 
 contextBridge.exposeInMainWorld("api", { getLocalPhotos })
 

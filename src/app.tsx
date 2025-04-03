@@ -23,6 +23,8 @@ export function App()
    },
    [])
 
+   const folderPath: string = (window.electronStore?.get("folderPath") as string) || ""
+
    function onMouseMove(
       e: React.MouseEvent<HTMLDivElement>)
    {
@@ -56,7 +58,9 @@ export function App()
          onMouseMove={onMouseMove}
       >
          <SHOW_COMPONENT/>
-         <ElectronModal/>
+         <ElectronModal
+            customMessage={folderPath}
+         />
       </div>
    )
 }

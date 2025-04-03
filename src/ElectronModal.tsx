@@ -54,7 +54,9 @@ const ElectronModal: React.FC<ElectronModalProps> = ({
       <Modal.Header closeButton>
         <Modal.Title>{customTitle}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>{customMessage}</Modal.Body>
+      <Modal.Body>
+        {customMessage}
+      </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
           OK

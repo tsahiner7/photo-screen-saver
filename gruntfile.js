@@ -41,7 +41,7 @@ module.exports = function (grunt) {
                name: "photo-screen-saver",
                dir: "build",
                out: "package",
-               platform: "darwin",
+               platform: "win32",
                arch: "arm64",
                overwrite: true,
                prune: false, // Ensures all dependencies are included
