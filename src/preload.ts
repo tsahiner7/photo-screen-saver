@@ -12,7 +12,10 @@ contextBridge.exposeInMainWorld("electronStore", {
   set: (key: string, value: string) => store.set(key, value)
 })
 
-contextBridge.exposeInMainWorld("api", { getLocalPhotos })
+contextBridge.exposeInMainWorld("api", { 
+  getLocalPhotos,
+  chooseFolder: () => ipcRenderer.invoke("choose-folder")
+})
 
 // Expose an IPC communication function to the renderer process to trigger the modal
 contextBridge.exposeInMainWorld("electron", {
@@ -21,7 +24,7 @@ contextBridge.exposeInMainWorld("electron", {
    
    // Send a message to the main process when it's necessary to trigger the dialog
    showDialog: () => ipcRenderer.send("show-dialog")
- })
+})
 
 function getLocalPhotos(): Photo[]
 {

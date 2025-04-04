@@ -13,6 +13,8 @@ const ElectronModal: React.FC<ElectronModalProps> = ({
 }) => {
   const [show, setShow] = useState(false)
 
+  const [newChosenFolder, setNewChosenFolder] = useState<string>("")
+
   useEffect(() => {
     // Listen for the 'open-modal' event from the main process
     if (window.electron) {
@@ -56,6 +58,16 @@ const ElectronModal: React.FC<ElectronModalProps> = ({
       </Modal.Header>
       <Modal.Body>
         {customMessage}
+        {newChosenFolder}
+        <Button
+          onClick={
+            () => setNewChosenFolder(
+              window.api!.chooseFolder()
+            )
+          }
+        >
+          Choose...
+        </Button>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>

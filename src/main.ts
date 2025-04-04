@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog } from "electron"
+import { app, BrowserWindow, dialog, ipcMain } from "electron"
 import path from "path"
 import Store from "electron-store"
 import { existsSync, readdirSync, statSync } from "fs"
@@ -108,4 +108,17 @@ app.on("ready", () =>
       // // Example in main.ts to trigger modal from main process
       // mainWindow!.webContents.send("open-modal")
    }, 3000)
+})
+
+// Add this handler for the folder selection dialog
+ipcMain.handle("choose-folder", async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({ 
+    properties: ["openDirectory"] 
+  })
+  
+  if (canceled || filePaths.length === 0) {
+    return null
+  }
+  
+  return filePaths[0]
 })
