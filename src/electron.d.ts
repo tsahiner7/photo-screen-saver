@@ -4,6 +4,7 @@ declare global {
       electron: {
         onShowModal: (callback: () => void) => void
         showDialog: () => void
+        restartApp: () => void
       }
       showModal?: () => void;
       api?: any;

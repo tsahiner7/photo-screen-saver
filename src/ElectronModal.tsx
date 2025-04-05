@@ -35,6 +35,7 @@ const ElectronModal: React.FC<ElectronModalProps> = ({
   const handleClose = () => {
     console.log("Siktir git!")
     setShow(false)
+    window.electron.restartApp()
   }
 
   // Make these functions available globally for other components
@@ -60,11 +61,20 @@ const ElectronModal: React.FC<ElectronModalProps> = ({
         {customMessage}
         {newChosenFolder}
         <Button
-          onClick={
-            () => setNewChosenFolder(
-              window.api!.chooseFolder()
-            )
-          }
+          onClick={async () => {
+            const newPath = await window.api!.chooseFolder()
+            setNewChosenFolder(newPath)
+
+            const oldPath = window.electronStore!.get("chosenFolder")
+            if (newPath !== oldPath) {
+              window.electronStore!.set("chosenFolder", newPath)
+
+              // Send custom event, so we won't need to restart the app 
+              // to see the new chosenFolder
+              window.dispatchEvent(new Event("folder-changed"))
+              setNewChosenFolder("") // clear for next time
+            }
+          }}
         >
           Choose...
         </Button>

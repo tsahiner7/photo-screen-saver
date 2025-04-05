@@ -23,14 +23,19 @@ contextBridge.exposeInMainWorld("electron", {
    onShowModal: (callback: () => void) => ipcRenderer.on("open-modal", callback),
    
    // Send a message to the main process when it's necessary to trigger the dialog
-   showDialog: () => ipcRenderer.send("show-dialog")
+   showDialog: () => ipcRenderer.send("show-dialog"),
+   restartApp: () => ipcRenderer.send("restart-app")
 })
 
 function getLocalPhotos(): Photo[]
 {
-   const folderArg = process.argv.find(arg => arg.startsWith("--local-folder-path=")) ?? ""
-   
-   let folderPath = folderArg.replace("--local-folder-path=", "") 
+
+   let folderPath = store.get("chosenFolder") as string | undefined
+
+    if (!folderPath) {
+      const folderArg = process.argv.find(arg => arg.startsWith("--local-folder-path=")) ?? ""
+      folderPath = folderArg.replace("--local-folder-path=", "") 
+    }
 
    if(!folderPath.endsWith("/"))
       folderPath += "/"
