@@ -18,8 +18,18 @@ const FADE_IN_DURATION = 3
 
 const SECONDS = 1000
 
-export function PhotoSlideshow()
+interface PhotoSlideshowProps {
+   folderChangeCount?: any
+ }
+ 
+ export const PhotoSlideshow: React.FC<PhotoSlideshowProps> = (
+   {
+      folderChangeCount
+   }
+ ) => 
 {
+   console.log(folderChangeCount)
+   // Does folder path need to be added to this state ? ? ?
    const [state, dispatch] = useReducer(reducer, initialState)
 
    const nodeRef = useRef(null)
@@ -47,9 +57,12 @@ export function PhotoSlideshow()
          }
       }
 
+      // dispatch({ type: "changeFolderPath" })
       load()
    },
-   [])
+   // Somehow get folder path into this useEffect dependency array...
+   // [state.photos /*folderChangeCount*/])
+   )
 
    useEffect(() =>
    {
@@ -116,6 +129,7 @@ interface State
    zIndex: number,
    origin: { x: number, y: number },
    isImageLoaded: boolean,
+   currentFolderPath: string,
 }
 
 const initialState: State =
@@ -125,6 +139,7 @@ const initialState: State =
    zIndex: 0,
    origin: { x: 0, y: 0 },
    isImageLoaded: false,
+   currentFolderPath: ""
 }
 
 interface ActionLoad
@@ -143,7 +158,12 @@ interface ActionImageLoad
    type: "imageload"
 }
 
-type Action = ActionLoad | ActionNext | ActionImageLoad
+interface ActionChangeFolderPath
+{
+   type: "changeFolderPath"
+}
+
+type Action = ActionLoad | ActionNext | ActionImageLoad | ActionChangeFolderPath
 
 function reducer(
    state: State,
@@ -158,7 +178,8 @@ function reducer(
             photoIdx: 0,
             zIndex: 1,
             origin: getRandomOrigin(),
-            isImageLoaded: false
+            isImageLoaded: false,
+            currentFolderPath: "",
          }
 
       case "next":
@@ -172,6 +193,9 @@ function reducer(
 
       case "imageload":
          return { ...state, isImageLoaded: true }
+
+      case "changeFolderPath":
+         return {...state, photos: [], photoIdx: -1}
    }
 }
 

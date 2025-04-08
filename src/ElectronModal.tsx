@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react"
 import { Modal, Button } from "react-bootstrap"
+// import { getLocalPhotos } from "./localPhotos"
 
 interface ElectronModalProps {
   // Optional custom props
   customTitle?: string
   customMessage?: string
+  folderChangeCount?: any
+  setFolderChangeCount?: any
 }
 
 const ElectronModal: React.FC<ElectronModalProps> = ({ 
   customTitle = "Screen Saver Options",
-  customMessage = "This screen saver has no options that you can set."
+  customMessage = "This screen saver has no options that you can set.",
+  folderChangeCount, 
+  setFolderChangeCount,
 }) => {
   const [show, setShow] = useState(false)
 
@@ -35,7 +40,10 @@ const ElectronModal: React.FC<ElectronModalProps> = ({
   const handleClose = () => {
     console.log("Siktir git!")
     setShow(false)
-    window.electron.restartApp()
+
+    setFolderChangeCount(folderChangeCount + 1)
+    // window.electron.restartApp()
+    // getLocalPhotos()
   }
 
   // Make these functions available globally for other components
