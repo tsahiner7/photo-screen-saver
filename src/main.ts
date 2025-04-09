@@ -28,7 +28,7 @@ app.on("ready", () =>
       || process.argv[1].match(/^\/c/))
       {
          dialog.showMessageBox({ message: "This screen saver has no options that you can set.", buttons: ["OK"] })
-         app.quit()
+         // app.quit()
          return
       }
 
@@ -49,8 +49,8 @@ app.on("ready", () =>
       mainWindow!.loadFile("index.html")
       // mainWindow!.webContents.openDevTools()
 
-      mainWindow!.setKiosk(true)
-      mainWindow!.setAlwaysOnTop(true)
+      // mainWindow!.setKiosk(true)
+      // mainWindow!.setAlwaysOnTop(true)
       mainWindow!.show()
    }, 3000)
 })

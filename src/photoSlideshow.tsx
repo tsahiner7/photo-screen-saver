@@ -1,5 +1,5 @@
 import classNames from "classnames"
-import { useEffect, useReducer, useRef } from "react"
+import { forwardRef, useEffect, useImperativeHandle, useReducer, useRef } from "react"
 import { Transition, TransitionGroup } from "react-transition-group"
 import { getFlickrPhotos } from "./flickrPhotos"
 import { getLocalPhotos } from "./localPhotos"
@@ -10,7 +10,7 @@ import { closeWindow, delay, getRandom, shuffle } from "./utils"
 
 // Choose the source for the photos you want to display:
 type GetPhotosFn = typeof getFlickrPhotos | typeof getUnsplashPhotos | typeof getLocalPhotos
-const GET_PHOTOS: GetPhotosFn = getUnsplashPhotos
+const GET_PHOTOS: GetPhotosFn = getLocalPhotos
 
 // Keep these in sync with photoSlideshow.module.scss:
 const PHOTO_INTERVAL = 60
@@ -18,173 +18,210 @@ const FADE_IN_DURATION = 5
 
 const SECONDS = 1000
 
-export function PhotoSlideshow()
-{
-   const [state, dispatch] = useReducer(reducer, initialState)
+// Define the ref type
+export interface PhotoSlideshowRef {
+  changeFolder: (newPath: string) => void;
+}
 
-   const nodeRef = useRef(null)
+// Define props type (empty object for now, add properties if needed)
+interface PhotoSlideshowProps {
+  // Add any props here if needed
+}
 
-   useEffect(() =>
-   {
-      async function load()
+export const PhotoSlideshow = forwardRef<PhotoSlideshowRef, PhotoSlideshowProps>(
+  (props, ref) => {
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        changeFolder(newPath: string) {
+          dispatch({ type: "changefolderpath", newFolderPath: newPath })
+        }
+      })
+    )
+
+    const [state, dispatch] = useReducer(reducer, initialState)
+
+    const nodeRef = useRef(null)
+
+    useEffect(() =>
+    {
+      async function load(folderPath: string)
       {
-         try
-         {
-            const photos = await GET_PHOTOS()
+        if (folderPath.length === 0)
+            return
 
-            if(photos.length === 0)
-               throw new Error("No photos found that meet criteria.")
+        try
+        {
+         alert(folderPath)
+         const photos = await GET_PHOTOS(folderPath)
 
-            console.log(`${photos.length} photos found that meet criteria`)
+          if(photos.length === 0)
+            throw new Error("No photos found that meet criteria.")
 
-            shuffle(photos)
-            dispatch({ type: "load", photos })
-         }
-         catch(err: any)
-         {
-            window.alert(err.toString())
-            closeWindow()
-         }
+          console.log(`${photos.length} photos found that meet criteria`)
+
+          shuffle(photos)
+          dispatch({ type: "load", photos })
+        }
+        catch(err: any)
+        {
+          window.alert(err.toString())
+          closeWindow()
+        }
       }
 
-      load()
-   },
-   [])
+      load(state.folderPath)
+    },
+    [state.folderPath])
 
-   useEffect(() =>
-   {
+    useEffect(() =>
+    {
       if(state.photos.length > 0)
       {
-         const interval = window.setInterval(() => dispatch({ type: "next" }), PHOTO_INTERVAL * SECONDS)
-         return () => window.clearInterval(interval)
+        const interval = window.setInterval(() => dispatch({ type: "next" }), PHOTO_INTERVAL * SECONDS)
+        return () => window.clearInterval(interval)
       }
-   },
-   [state.photos])
+    },
+    [state.photos])
 
-   useEffect(() =>
-   {
+    useEffect(() =>
+    {
       if(state.photoIdx >= 0)
-         console.log(`photo ${state.photoIdx}: ${state.photos[state.photoIdx].url}`)
-   },
-   [state.photos, state.photoIdx])
+        console.log(`photo ${state.photoIdx}: ${state.photos[state.photoIdx].url}`)
+    },
+    [state.photos, state.photoIdx])
 
-   async function onImageLoad()
-   {
+    async function onImageLoad()
+    {
       // If we dispatch the imageload action too quickly, the visible style will be added to the
       // photo div too quickly and the browser won't run its animations. This delay is enough to
       // solve the problem.
       await delay(100)
 
       dispatch({ type: "imageload" })
-   }
+    }
 
-   return (
+    return (
       <div className={styles.root}>
-         {state.photoIdx >= 0 &&
-            <TransitionGroup>
-               <Transition key={state.photoIdx} nodeRef={nodeRef} timeout={(FADE_IN_DURATION + 1) * SECONDS} appear={true}>
-                  <div ref={nodeRef}>
-                     <div
-                        className={classNames(styles.photo, { [styles.visible]: state.isImageLoaded })}
-                        style={{ zIndex: state.zIndex, transformOrigin: `${state.origin.x}% ${state.origin.y}%` }}
-                     >
-                        <img
-                           src={state.photos[state.photoIdx].url}
-                           alt=""
-                           onLoad={onImageLoad}
-                           onError={e => dispatch({ type: "next" })}
-                        />
-                     </div>
-                     <label
-                        className={classNames(styles[`pos${state.photoIdx % 4}`], { [styles.visible]: state.isImageLoaded })}
-                        style={{ zIndex: state.zIndex }}
-                     >
-                        {getCaption(state.photos[state.photoIdx])}
-                     </label>
-                  </div>
-               </Transition>
-            </TransitionGroup>
-         }
+        {state.photoIdx >= 0 &&
+          <TransitionGroup>
+            <Transition key={state.photoIdx} nodeRef={nodeRef} timeout={(FADE_IN_DURATION + 1) * SECONDS} appear={true}>
+              <div ref={nodeRef}>
+                <div
+                  className={classNames(styles.photo, { [styles.visible]: state.isImageLoaded })}
+                  style={{ zIndex: state.zIndex, transformOrigin: `${state.origin.x}% ${state.origin.y}%` }}
+                >
+                  <img
+                    src={state.photos[state.photoIdx].url}
+                    alt=""
+                    onLoad={onImageLoad}
+                    onError={e => dispatch({ type: "next" })}
+                  />
+                </div>
+                <label
+                  className={classNames(styles[`pos${state.photoIdx % 4}`], { [styles.visible]: state.isImageLoaded })}
+                  style={{ zIndex: state.zIndex }}
+                >
+                  {getCaption(state.photos[state.photoIdx])}
+                </label>
+              </div>
+            </Transition>
+          </TransitionGroup>
+        }
       </div>
-   )
-}
+    )
+  }
+)
 
 interface State
 {
-   photos: Photo[],
-   photoIdx: number,
-   zIndex: number,
-   origin: { x: number, y: number },
-   isImageLoaded: boolean,
+  photos: Photo[],
+  photoIdx: number,
+  zIndex: number,
+  origin: { x: number, y: number },
+  isImageLoaded: boolean,
+  folderPath: string,
 }
 
 const initialState: State =
 {
-   photos: [],
-   photoIdx: -1,
-   zIndex: 0,
-   origin: { x: 0, y: 0 },
-   isImageLoaded: false,
+  photos: [],
+  photoIdx: -1,
+  zIndex: 0,
+  origin: { x: 0, y: 0 },
+  isImageLoaded: false,
+  folderPath: "C:/Users/t-ste/Downloads/Bing Daily Pictures",
 }
 
 interface ActionLoad
 {
-   type: "load",
-   photos: Photo[],
+  type: "load",
+  photos: Photo[],
 }
 
 interface ActionNext
 {
-   type: "next"
+  type: "next"
 }
 
 interface ActionImageLoad
 {
-   type: "imageload"
+  type: "imageload"
 }
 
-type Action = ActionLoad | ActionNext | ActionImageLoad
+interface ActionChangeFolderPath
+{
+  type: "changefolderpath"
+  newFolderPath: string;
+}
+
+type Action = ActionLoad | ActionNext | ActionImageLoad | ActionChangeFolderPath
 
 function reducer(
-   state: State,
-   action: Action)
+  state: State,
+  action: Action)
 : State
 {
-   switch(action.type)
-   {
-      case "load":
-         return {
-            photos: action.photos,
-            photoIdx: 0,
-            zIndex: 1,
-            origin: getRandomOrigin(),
-            isImageLoaded: false
-         }
+  switch(action.type)
+  {
+    case "load":
+      return {
+        photos: action.photos,
+        photoIdx: 0,
+        zIndex: 1,
+        origin: getRandomOrigin(),
+        isImageLoaded: false,
+        folderPath: ""
+      }
 
-      case "next":
-         return {
-            ...state,
-            photoIdx: (state.photoIdx >= state.photos.length - 1) ? 0 : state.photoIdx + 1,
-            zIndex: state.zIndex + 1,
-            origin: getRandomOrigin(),
-            isImageLoaded: false,
-         }
+    case "next":
+      return {
+        ...state,
+        photoIdx: (state.photoIdx >= state.photos.length - 1) ? 0 : state.photoIdx + 1,
+        zIndex: state.zIndex + 1,
+        origin: getRandomOrigin(),
+        isImageLoaded: false,
+      }
 
-      case "imageload":
-         return { ...state, isImageLoaded: true }
-   }
+    case "imageload":
+      return { ...state, isImageLoaded: true }
+    
+    case "changefolderpath":
+      return { ...state, folderPath: action.newFolderPath, photos: [], photoIdx: -1 }
+  }
 }
 
 function getRandomOrigin()
 {
-   return { x: getRandom(0, 100), y: getRandom(0, 100) }
+  return { x: getRandom(0, 100), y: getRandom(0, 100) }
 }
 
 function getCaption(
-   photo: Photo)
+  photo: Photo)
 {
-   if(photo.title || photo.attribution)
-      return `${photo.title || "(Untitled)"} ${photo.attribution}`
+  if(photo.title || photo.attribution)
+    return `${photo.title || "(Untitled)"} ${photo.attribution}`
 
-   return ""
+  return ""
 }

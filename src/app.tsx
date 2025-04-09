@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
-import { closeWindow } from "./utils"
-import { PhotoSlideshow } from "./photoSlideshow"
+// import { closeWindow } from "./utils"
+import { PhotoSlideshow, PhotoSlideshowRef } from "./photoSlideshow"
 import { DemoCanvas } from "./demoCanvas"
 import { DemoCss } from "./demoCss"
 import { DemoShader } from "./demoShader"
@@ -13,6 +13,8 @@ const SHOW_COMPONENT: ShowComponent = PhotoSlideshow
 
 export function App()
 {
+   const refPhotoSlideShow = useRef<PhotoSlideshowRef>(null)
+
    const refRoot = useRef<HTMLDivElement>(null)
    const refStartMousePos = useRef({ x: NaN, y: NaN })
 
@@ -36,7 +38,7 @@ export function App()
          if((Math.abs(e.pageX - refStartMousePos.current.x) > moveThreshold)
          || (Math.abs(e.pageY - refStartMousePos.current.y) > moveThreshold))
          {
-            closeWindow()
+            // closeWindow()
          }
       }
    }
@@ -46,11 +48,14 @@ export function App()
          ref={refRoot}
          className={styles.root}
          tabIndex={-1}
-         onClick={e => closeWindow()}
-         onKeyDown={e => closeWindow()}
+         // onClick={e => closeWindow()}
+         onClick={() => refPhotoSlideShow?.current?.changeFolder("C:/Users/t-ste/Pictures/For Screensaver Testing")}
+         // onKeyDown={e => closeWindow()}
          onMouseMove={onMouseMove}
       >
-         <SHOW_COMPONENT/>
+         <SHOW_COMPONENT
+            ref={refPhotoSlideShow}
+         />
       </div>
    )
 }
