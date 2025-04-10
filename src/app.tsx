@@ -52,7 +52,7 @@ export function App()
          // onClick={e => closeWindow()}
          onClick={
             async () => {
-              const storedPath = await localforage.getItem<string>("path") ?? "C:/Users/t-ste/Downloads/Bing Daily Pictures"
+              const storedPath = await localforage.getItem<string>("path") ?? ""
 
               const newPath = storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures"
                ? "C:/Users/t-ste/Pictures/For Screensaver Testing"
