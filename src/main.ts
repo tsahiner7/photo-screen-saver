@@ -12,7 +12,7 @@ app.on("window-all-closed", () =>
 })
 
 app.on("ready", () =>
-{
+{   
    if(process.argv.length > 1)
    {
       // The /p option tells us to display the screen saver in the tiny preview window in the Screen Saver Settings dialog.
@@ -47,7 +47,7 @@ app.on("ready", () =>
    setTimeout(() => 
    {
       mainWindow!.loadFile("index.html")
-      // mainWindow!.webContents.openDevTools()
+      mainWindow!.webContents.openDevTools()
 
       // mainWindow!.setKiosk(true)
       // mainWindow!.setAlwaysOnTop(true)
