@@ -49,7 +49,7 @@ export const PhotoSlideshow = forwardRef<PhotoSlideshowRef, PhotoSlideshowProps>
     {
       async function load(folderPath: string)
       {
-        const storedPath = await localforage.getItem<string>("path") ?? ""
+        const storedPath = await localforage.getItem<string>("folderPath") ?? ""
 
         if (folderPath.length === 0)
             return

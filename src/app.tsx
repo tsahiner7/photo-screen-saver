@@ -52,13 +52,13 @@ export function App()
          // onClick={e => closeWindow()}
          onClick={
             async () => {
-              const storedPath = await localforage.getItem<string>("path") ?? ""
+              const storedPath = await localforage.getItem<string>("folderPath") ?? ""
 
-              const newPath = storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures"
-               ? "C:/Users/t-ste/Pictures/For Screensaver Testing"
-               : "C:/Users/t-ste/Downloads/Bing Daily Pictures"
+              const newPath = storedPath === "/Users/tsteele/Pictures/net.neolib.BingDailyWallpaper"
+               ? "/Users/tsteele/Pictures/Photo Screen Saver Test Images"
+               : "/Users/tsteele/Pictures/net.neolib.BingDailyWallpaper"
 
-               const newlyStoredPath = await localforage.setItem("path", newPath)
+               const newlyStoredPath = await localforage.setItem("folderPath", newPath)
 
                refPhotoSlideShow?.current?.changeFolder(newlyStoredPath)
             }
