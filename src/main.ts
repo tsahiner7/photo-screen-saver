@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog } from "electron"
+import { app, BrowserWindow } from "electron"
 import path from "path"
 
 // When running in true screen saver mode, the Chromium GPU process crashes for some reason.
@@ -24,13 +24,13 @@ app.on("ready", () =>
 
       // The /S option is passed when the user chooses Configure from the .scr file context menu (although we don't see this in practice).
       // The /c:# option is passed when the user clicks Settings... in the Screen Saver Settings dialog.
-      if((process.argv[1] === "/S")
-      || process.argv[1].match(/^\/c/))
-      {
-         dialog.showMessageBox({ message: "This screen saver has no options that you can set.", buttons: ["OK"] })
-         // app.quit()
-         return
-      }
+      // if((process.argv[1] === "/S")
+      // || process.argv[1].match(/^\/c/))
+      // {
+      //    dialog.showMessageBox({ message: "This screen saver has no options that you can set.", buttons: ["OK"] })
+      //    app.quit()
+      //    return
+      // }
 
       // dialog.showMessageBox({ message: process.argv.join("\n"), buttons: ["OK"] })
    }
@@ -39,7 +39,14 @@ app.on("ready", () =>
       show: false,
       autoHideMenuBar: true,
       backgroundColor: "#000",
-      webPreferences: { sandbox: false, preload: path.join(__dirname, "preload.js") },
+      webPreferences: { 
+         sandbox: false, 
+         preload: path.join(__dirname, "preload.js"),
+         additionalArguments: (process.argv[1] === "/S") || process.argv[1]?.match(/^\/c/)
+            ? ["--show-settings"]
+            : []
+         , 
+      },
    })
 
    // We have to delay the following operations for a few seconds, otherwise the page doesn't get

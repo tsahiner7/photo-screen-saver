@@ -54,10 +54,14 @@ export function App()
             async () => {
               const storedPath = await localforage.getItem<string>("folderPath") ?? ""
 
-              const newPath = storedPath === "/Users/tsteele/Pictures/net.neolib.BingDailyWallpaper"
-               ? "/Users/tsteele/Pictures/Photo Screen Saver Test Images"
-               : "/Users/tsteele/Pictures/net.neolib.BingDailyWallpaper"
+              console.log("here", storedPath)
 
+              const newPath = storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures"
+               ? "C:/Users/t-ste/Pictures/For Screensaver Testing"
+               : "C:/Users/t-ste/Downloads/Bing Daily Pictures"
+
+               console.log("here2", newPath)
+               
                const newlyStoredPath = await localforage.setItem("folderPath", newPath)
 
                refPhotoSlideShow?.current?.changeFolder(newlyStoredPath)

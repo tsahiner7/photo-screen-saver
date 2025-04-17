@@ -2,7 +2,13 @@ import fs from "fs"
 import { contextBridge } from "electron"
 import { Photo } from "./photo"
 
-contextBridge.exposeInMainWorld("api", { getLocalPhotos })
+contextBridge.exposeInMainWorld(
+   "api", 
+   { 
+      getLocalPhotos,
+      shouldShowSettings: () => process.argv.find(arg => arg.startsWith("--show-settings")) !== undefined,
+   }
+)
 
 function getLocalPhotos(folderPath: string): Photo[]
 {

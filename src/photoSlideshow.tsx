@@ -41,7 +41,17 @@ export const PhotoSlideshow = forwardRef<PhotoSlideshowRef, PhotoSlideshowProps>
       })
     )
 
-    const [state, dispatch] = useReducer(reducer, initialState)
+    const [state, dispatch] = useReducer(
+      reducer, 
+      initialState,
+      (state) => ({
+        ...state,
+        localFolderPath: window.api.shouldShowSettings() 
+          ? "C:/Users/t-ste/Pictures/Settings" 
+          : ""
+        ,
+      })
+    )
 
     const nodeRef = useRef(null)
 
@@ -78,6 +88,18 @@ export const PhotoSlideshow = forwardRef<PhotoSlideshowRef, PhotoSlideshowProps>
       load(state.folderPath)
     },
     [state.folderPath])
+
+    useEffect(
+      () => {
+        const shouldShowSettings = window.api.shouldShowSettings()
+        console.log("shouldShowSettings", shouldShowSettings)
+
+        if (shouldShowSettings) {
+          dispatch({ type: "changefolderpath", newFolderPath: "C:/Users/t-ste/Pictures/Settings" })
+        }
+      },
+      []
+    )
 
     useEffect(() =>
     {
@@ -148,6 +170,14 @@ interface State
   folderPath: string,
 }
 
+declare global {
+  interface Window {
+    api: {
+      shouldShowSettings: () => boolean
+    }
+  }
+}
+
 const initialState: State =
 {
   photos: [],
@@ -155,7 +185,7 @@ const initialState: State =
   zIndex: 0,
   origin: { x: 0, y: 0 },
   isImageLoaded: false,
-  folderPath: "C:/Users/t-ste/Downloads/Bing Daily Pictures",
+  folderPath: "",
 }
 
 interface ActionLoad
