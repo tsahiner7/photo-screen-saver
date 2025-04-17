@@ -85,18 +85,26 @@ export const PhotoSlideshow = forwardRef<PhotoSlideshowRef, PhotoSlideshowProps>
         }
       }
 
+      alert(state.folderPath)
       load(state.folderPath)
     },
     [state.folderPath])
 
     useEffect(
       () => {
-        const shouldShowSettings = window.api.shouldShowSettings()
-        console.log("shouldShowSettings", shouldShowSettings)
 
-        if (shouldShowSettings) {
-          dispatch({ type: "changefolderpath", newFolderPath: "C:/Users/t-ste/Pictures/Settings" })
+        const initFolderPath = async () => {
+          const shouldShowSettings = window.api.shouldShowSettings()
+          console.log("shouldShowSettings", shouldShowSettings)
+  
+          if (shouldShowSettings) {
+            alert("shouldShowSettings")
+            const settingsFolderPath = await localforage.setItem("folderPath", "C:/Users/t-ste/Pictures/Settings")
+            dispatch({ type: "changefolderpath", newFolderPath: settingsFolderPath })
+          }
         }
+
+        initFolderPath()
       },
       []
     )
@@ -242,6 +250,7 @@ function reducer(
       return { ...state, isImageLoaded: true }
     
     case "changefolderpath":
+      alert("reducer changefolderpath")
       return { ...state, folderPath: action.newFolderPath, photos: [], photoIdx: -1 }
   }
 }
