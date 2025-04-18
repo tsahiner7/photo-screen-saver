@@ -1,5 +1,5 @@
 import classNames from "classnames"
-import { forwardRef, useEffect, useImperativeHandle, useReducer, useRef } from "react"
+import { useEffect, useReducer, useRef } from "react"
 import { Transition, TransitionGroup } from "react-transition-group"
 import { getFlickrPhotos } from "./flickrPhotos"
 import { getLocalPhotos } from "./localPhotos"
@@ -19,54 +19,23 @@ const FADE_IN_DURATION = 5
 
 const SECONDS = 1000
 
-// Define the ref type
-export interface PhotoSlideshowRef {
-  changeFolder: (newPath: string) => void;
-}
-
-// Define props type (empty object for now, add properties if needed)
-interface PhotoSlideshowProps {
-  // Add any props here if needed
-}
-
-export const PhotoSlideshow = forwardRef<PhotoSlideshowRef, PhotoSlideshowProps>(
-  (props, ref) => {
-
-    useImperativeHandle(
-      ref,
-      () => ({
-        changeFolder(newPath: string) {
-          dispatch({ type: "changefolderpath", newFolderPath: newPath })
-        }
-      })
-    )
-
-    const [state, dispatch] = useReducer(
-      reducer, 
-      initialState,
-      (state) => ({
-        ...state,
-        localFolderPath: window.api.shouldShowSettings() 
-          ? "C:/Users/t-ste/Pictures/Settings" 
-          : ""
-        ,
-      })
-    )
+export function PhotoSlideshow()
+{
+    const [state, dispatch] = useReducer(reducer, initialState)
 
     const nodeRef = useRef(null)
 
     useEffect(() =>
     {
-      async function load(folderPath: string)
+      async function load()
       {
         const storedPath = await localforage.getItem<string>("folderPath") ?? ""
 
-        if (folderPath.length === 0)
+        if (storedPath.length === 0)
             return
 
         try
         {
-         alert(storedPath)
          const photos = await GET_PHOTOS(storedPath)
 
           if(photos.length === 0)
@@ -84,30 +53,9 @@ export const PhotoSlideshow = forwardRef<PhotoSlideshowRef, PhotoSlideshowProps>
           closeWindow()
         }
       }
-
-      alert(state.folderPath)
-      load(state.folderPath)
+      load()
     },
-    [state.folderPath])
-
-    useEffect(
-      () => {
-
-        const initFolderPath = async () => {
-          const shouldShowSettings = window.api.shouldShowSettings()
-          console.log("shouldShowSettings", shouldShowSettings)
-  
-          if (shouldShowSettings) {
-            alert("shouldShowSettings")
-            const settingsFolderPath = await localforage.setItem("folderPath", "C:/Users/t-ste/Pictures/Settings")
-            dispatch({ type: "changefolderpath", newFolderPath: settingsFolderPath })
-          }
-        }
-
-        initFolderPath()
-      },
-      []
-    )
+    [])
 
     useEffect(() =>
     {
@@ -166,7 +114,6 @@ export const PhotoSlideshow = forwardRef<PhotoSlideshowRef, PhotoSlideshowProps>
       </div>
     )
   }
-)
 
 interface State
 {
@@ -175,15 +122,6 @@ interface State
   zIndex: number,
   origin: { x: number, y: number },
   isImageLoaded: boolean,
-  folderPath: string,
-}
-
-declare global {
-  interface Window {
-    api: {
-      shouldShowSettings: () => boolean
-    }
-  }
 }
 
 const initialState: State =
@@ -193,7 +131,6 @@ const initialState: State =
   zIndex: 0,
   origin: { x: 0, y: 0 },
   isImageLoaded: false,
-  folderPath: "",
 }
 
 interface ActionLoad
@@ -212,13 +149,7 @@ interface ActionImageLoad
   type: "imageload"
 }
 
-interface ActionChangeFolderPath
-{
-  type: "changefolderpath"
-  newFolderPath: string;
-}
-
-type Action = ActionLoad | ActionNext | ActionImageLoad | ActionChangeFolderPath
+type Action = ActionLoad | ActionNext | ActionImageLoad
 
 function reducer(
   state: State,
@@ -234,7 +165,6 @@ function reducer(
         zIndex: 1,
         origin: getRandomOrigin(),
         isImageLoaded: false,
-        folderPath: ""
       }
 
     case "next":
@@ -248,10 +178,6 @@ function reducer(
 
     case "imageload":
       return { ...state, isImageLoaded: true }
-    
-    case "changefolderpath":
-      alert("reducer changefolderpath")
-      return { ...state, folderPath: action.newFolderPath, photos: [], photoIdx: -1 }
   }
 }
 

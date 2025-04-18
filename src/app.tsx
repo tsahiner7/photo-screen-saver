@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
-// import { closeWindow } from "./utils"
-import { PhotoSlideshow, PhotoSlideshowRef } from "./photoSlideshow"
+import { closeWindow } from "./utils"
+import { PhotoSlideshow } from "./photoSlideshow"
 import { DemoCanvas } from "./demoCanvas"
 import { DemoCss } from "./demoCss"
 import { DemoShader } from "./demoShader"
@@ -12,16 +12,44 @@ import localforage from "localforage"
 type ShowComponent = typeof PhotoSlideshow | typeof DemoCanvas | typeof DemoCss | typeof DemoShader | typeof DemoThreeJs
 const SHOW_COMPONENT: ShowComponent = PhotoSlideshow
 
+declare global {
+   interface Window {
+      api: {
+         shouldShowSettings: () => boolean
+      }
+   }
+}
+
 export function App()
 {
-   const refPhotoSlideShow = useRef<PhotoSlideshowRef>(null)
-
    const refRoot = useRef<HTMLDivElement>(null)
    const refStartMousePos = useRef({ x: NaN, y: NaN })
 
    useEffect(() =>
    {
       refRoot.current!.focus()
+   },
+   [])
+
+   useEffect(() => {
+
+      const changeFolder = async () => {
+         const shouldShowSettings = window.api.shouldShowSettings()
+
+         if (shouldShowSettings) {
+            const storedPath = await localforage.getItem<string>("folderPath") ?? ""
+   
+            const newPath = (storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures")
+               ? "C:/Users/t-ste/Pictures/For Screensaver Testing"
+               : "C:/Users/t-ste/Downloads/Bing Daily Pictures"
+             
+             await localforage.setItem("folderPath", newPath)
+
+             closeWindow()
+         }
+      }
+
+      changeFolder()      
    },
    [])
 
@@ -49,30 +77,11 @@ export function App()
          ref={refRoot}
          className={styles.root}
          tabIndex={-1}
-         // onClick={e => closeWindow()}
-         onClick={
-            async () => {
-              const storedPath = await localforage.getItem<string>("folderPath") ?? ""
-
-              console.log("here", storedPath)
-
-              const newPath = storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures"
-               ? "C:/Users/t-ste/Pictures/For Screensaver Testing"
-               : "C:/Users/t-ste/Downloads/Bing Daily Pictures"
-
-               console.log("here2", newPath)
-               
-               const newlyStoredPath = await localforage.setItem("folderPath", newPath)
-
-               refPhotoSlideShow?.current?.changeFolder(newlyStoredPath)
-            }
-         }
-         // onKeyDown={e => closeWindow()}
+         onClick={e => closeWindow()}
+         onKeyDown={e => closeWindow()}
          onMouseMove={onMouseMove}
       >
-         <SHOW_COMPONENT
-            ref={refPhotoSlideShow}
-         />
+         <SHOW_COMPONENT />
       </div>
    )
 }
