@@ -6,10 +6,19 @@ import { DemoCss } from "./demoCss"
 import { DemoShader } from "./demoShader"
 import { DemoThreeJs } from "./demoThreeJs"
 import styles from "./app.module.scss"
+import localforage from "localforage"
 
 // Choose the component you want to display in the screen saver:
 type ShowComponent = typeof PhotoSlideshow | typeof DemoCanvas | typeof DemoCss | typeof DemoShader | typeof DemoThreeJs
 const SHOW_COMPONENT: ShowComponent = PhotoSlideshow
+
+declare global {
+   interface Window {
+      api: {
+         shouldShowSettings: () => boolean
+      }
+   }
+}
 
 export function App()
 {
@@ -19,6 +28,28 @@ export function App()
    useEffect(() =>
    {
       refRoot.current!.focus()
+   },
+   [])
+
+   useEffect(() => {
+
+      const changeFolder = async () => {
+         const shouldShowSettings = window.api.shouldShowSettings()
+
+         if (shouldShowSettings) {
+            const storedPath = await localforage.getItem<string>("folderPath") ?? ""
+   
+            const newPath = (storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures")
+               ? "C:/Users/t-ste/Pictures/For Screensaver Testing"
+               : "C:/Users/t-ste/Downloads/Bing Daily Pictures"
+             
+             await localforage.setItem("folderPath", newPath)
+
+             closeWindow()
+         }
+      }
+
+      changeFolder()      
    },
    [])
 

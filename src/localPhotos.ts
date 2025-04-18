@@ -1,6 +1,6 @@
 import { Photo } from "./photo"
 
-export function getLocalPhotos(): Promise<Photo[]>
+export function getLocalPhotos(folderPath: string): Promise<Photo[]>
 {
    const api = (window as any).api
 
@@ -10,6 +10,6 @@ export function getLocalPhotos(): Promise<Photo[]>
    if(typeof api === "undefined")
       throw new Error("The localPhotos module only works when running in Electron.")
 
-   const photos = api.getLocalPhotos()
+   const photos = api.getLocalPhotos(folderPath)
    return Promise.resolve(photos)
 }
