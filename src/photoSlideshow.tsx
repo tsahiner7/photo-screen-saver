@@ -49,7 +49,7 @@ export function PhotoSlideshow()
 
       load()
    },
-   [])
+   )
 
    useEffect(() =>
    {

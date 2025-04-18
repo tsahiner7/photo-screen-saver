@@ -124,6 +124,6 @@ ipcMain.handle("choose-folder", async () => {
 })
 
 ipcMain.on("restart-app", () => {
-   app.relaunch()
-   app.exit(0)
+   // app.relaunch()
+   // app.exit(0)
  })
