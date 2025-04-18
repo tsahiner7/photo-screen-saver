@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { closeWindow } from "./utils"
 import { PhotoSlideshow } from "./photoSlideshow"
 import { DemoCanvas } from "./demoCanvas"
@@ -25,6 +25,8 @@ export function App()
    const refRoot = useRef<HTMLDivElement>(null)
    const refStartMousePos = useRef({ x: NaN, y: NaN })
 
+   const [showSettings, setShowSettings] = useState(false)
+   
    useEffect(() =>
    {
       refRoot.current!.focus()
@@ -37,6 +39,10 @@ export function App()
          const shouldShowSettings = window.api.shouldShowSettings()
 
          if (shouldShowSettings) {
+
+            // Update some local state that we are showingSettings...
+            setShowSettings(true)
+
             const storedPath = await localforage.getItem<string>("folderPath") ?? ""
    
             const newPath = (storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures")
@@ -45,7 +51,7 @@ export function App()
              
              await localforage.setItem("folderPath", newPath)
 
-             closeWindow()
+            //  closeWindow()
          }
       }
 
@@ -81,7 +87,11 @@ export function App()
          onKeyDown={e => closeWindow()}
          onMouseMove={onMouseMove}
       >
-         <SHOW_COMPONENT/>
+         {
+            showSettings
+               ? <h1 style={{ backgroundColor: "yellow", color: "black"}}>Settings Modal Here</h1>
+               : <SHOW_COMPONENT/>
+         }
       </div>
    )
 }
