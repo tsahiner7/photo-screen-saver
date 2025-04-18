@@ -39,9 +39,9 @@ export function App()
          if (shouldShowSettings) {
             const storedPath = await localforage.getItem<string>("folderPath") ?? ""
    
-            const newPath = (storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures")
-               ? "C:/Users/t-ste/Pictures/For Screensaver Testing"
-               : "C:/Users/t-ste/Downloads/Bing Daily Pictures"
+            const newPath = (storedPath === "/Users/tolgasahiner/Desktop/landscapes")
+               ? "/Users/tolgasahiner/dedem"
+               : "/Users/tolgasahiner/Desktop/landscapes"
              
              await localforage.setItem("folderPath", newPath)
 

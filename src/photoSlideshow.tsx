@@ -29,7 +29,7 @@ export function PhotoSlideshow()
    {
       async function load()
       {
-        const storedPath = await localforage.getItem<string>("folderPath") ?? ""
+        const storedPath = await localforage.getItem<string>("folderPath") ?? "/Users/tolgasahiner/Desktop/landscapes"
 
         if (storedPath.length === 0)
             return
