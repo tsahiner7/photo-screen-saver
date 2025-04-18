@@ -67,7 +67,7 @@ export function App()
          if((Math.abs(e.pageX - refStartMousePos.current.x) > moveThreshold)
          || (Math.abs(e.pageY - refStartMousePos.current.y) > moveThreshold))
          {
-            // closeWindow()
+            closeWindow()
          }
       }
    }
@@ -81,7 +81,7 @@ export function App()
          onKeyDown={e => closeWindow()}
          onMouseMove={onMouseMove}
       >
-         <SHOW_COMPONENT />
+         <SHOW_COMPONENT/>
       </div>
    )
 }
