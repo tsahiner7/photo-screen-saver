@@ -82,6 +82,11 @@ export function App()
          onMouseMove={onMouseMove}
       >
          <SHOW_COMPONENT/>
+         {/* {
+            showingSettings 
+               ? <SETTINGS_MODAL/>
+               : <SHOW_COMPONENT/>
+         } */}
       </div>
    )
 }
