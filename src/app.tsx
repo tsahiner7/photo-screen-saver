@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { closeWindow } from "./utils"
 import { PhotoSlideshow } from "./photoSlideshow"
 import { DemoCanvas } from "./demoCanvas"
@@ -7,21 +7,17 @@ import { DemoShader } from "./demoShader"
 import { DemoThreeJs } from "./demoThreeJs"
 import styles from "./app.module.scss"
 import localforage from "localforage"
+import SETTINGS_MODAL from "./SettingsModal"
 
 // Choose the component you want to display in the screen saver:
 type ShowComponent = typeof PhotoSlideshow | typeof DemoCanvas | typeof DemoCss | typeof DemoShader | typeof DemoThreeJs
 const SHOW_COMPONENT: ShowComponent = PhotoSlideshow
 
-declare global {
-   interface Window {
-      api: {
-         shouldShowSettings: () => boolean
-      }
-   }
-}
-
 export function App()
 {
+   // toggle between the screens
+   const [showSettings, setShowSettings] = useState(false)
+
    const refRoot = useRef<HTMLDivElement>(null)
    const refStartMousePos = useRef({ x: NaN, y: NaN })
 
@@ -33,23 +29,31 @@ export function App()
 
    useEffect(() => {
 
-      const changeFolder = async () => {
+      const checkIfSettings = async () => {
          const shouldShowSettings = window.api.shouldShowSettings()
 
          if (shouldShowSettings) {
-            const storedPath = await localforage.getItem<string>("folderPath") ?? ""
+            // const storedPath = await localforage.getItem<string>("folderPath") ?? ""
    
-            const newPath = (storedPath === "/Users/tolgasahiner/Desktop/landscapes")
-               ? "/Users/tolgasahiner/dedem"
-               : "/Users/tolgasahiner/Desktop/landscapes"
+            // const newPath = (storedPath === "/Users/tolgasahiner/Desktop/landscapes")
+            //    ? "/Users/tolgasahiner/dedem"
+            //    : "/Users/tolgasahiner/Desktop/landscapes"
              
-             await localforage.setItem("folderPath", newPath)
+            //  await localforage.setItem("folderPath", newPath)
 
-             closeWindow()
+            //  closeWindow()
+
+            setShowSettings(true)
+         } 
+         else 
+         {
+            // read the stored path
+            const savedPath = await localforage.getItem<string>("folderPath")
+            console.log("Saved folder path:", savedPath)
          }
       }
 
-      changeFolder()      
+      checkIfSettings()      
    },
    [])
 
@@ -87,6 +91,7 @@ export function App()
                ? <SETTINGS_MODAL/>
                : <SHOW_COMPONENT/>
          } */}
+         {showSettings && <SETTINGS_MODAL />}
       </div>
    )
 }
