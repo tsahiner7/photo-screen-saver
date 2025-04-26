@@ -1,5 +1,5 @@
 import fs from "fs"
-import { contextBridge } from "electron"
+import { contextBridge, ipcRenderer } from "electron"
 import { Photo } from "./photo"
 
 contextBridge.exposeInMainWorld(
@@ -7,6 +7,10 @@ contextBridge.exposeInMainWorld(
    { 
       getLocalPhotos,
       shouldShowSettings: () => process.argv.find(arg => arg.startsWith("--show-settings")) !== undefined,
+      chooseFolder: async () => {
+         const folderPath = await ipcRenderer.invoke("choose-folder")
+         return folderPath
+      }
    }
 )
 

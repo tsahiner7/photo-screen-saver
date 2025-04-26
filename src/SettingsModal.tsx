@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react"
 import { Modal, Button, Form } from "react-bootstrap"
 import localforage from "localforage"
 
+interface SettingsModalProps {
+  onClose: () => void
+}
 
-const SETTINGS_MODAL: React.FC = () => {
+const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
   const [show, setShow] = useState(false)
   const [newChosenFolder, setNewChosenFolder] = useState<string>("")
 
@@ -11,6 +14,11 @@ const SETTINGS_MODAL: React.FC = () => {
   useEffect(() => {
     const handleOpen = () => {
       setShow(true)
+    }
+
+    // Automatically show the modal if running with --show-settings
+    if (window.api.shouldShowSettings()) {
+      handleOpen()
     }
 
     // Electron main process or React can trigger this event
@@ -43,7 +51,8 @@ const handleChooseFolder = async () => {
 
   const handleClose = () => {
     setShow(false)
-    window.electron?.restartApp() // Optional: restart to apply changes
+    onClose()
+    //window.electron?.restartApp() // Optional: restart to apply changes
   }
 
   return (
@@ -75,4 +84,4 @@ const handleChooseFolder = async () => {
   )
 }
 
-export default SETTINGS_MODAL
+export default SettingsModal

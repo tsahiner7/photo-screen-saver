@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron"
+import { app, BrowserWindow, ipcMain, dialog} from "electron"
 import path from "path"
 
 // When running in true screen saver mode, the Chromium GPU process crashes for some reason.
@@ -11,12 +11,26 @@ app.on("window-all-closed", () =>
    app.quit()
 })
 
+ipcMain.handle("choose-folder", async () => {
+   const result = await dialog.showOpenDialog({
+     properties: ["openDirectory"]
+   })
+ 
+   if (result.canceled || result.filePaths.length === 0) {
+     return ""
+   }
+ 
+   return result.filePaths[0]
+ })
+
 app.on("ready", () =>
 {
+   const args = process.argv.map(arg => arg.toLowerCase())
+
    if(process.argv.length > 1)
    {
       // The /p option tells us to display the screen saver in the tiny preview window in the Screen Saver Settings dialog.
-      if(process.argv[1] === "/p")
+      if(args.includes ("/p"))
       {
          app.quit()
          return
@@ -33,9 +47,12 @@ app.on("ready", () =>
          return
       }
 
-      // dialog.showMessageBox({ message: process.argv.join("\n"), buttons: ["OK"] })
+      dialog.showMessageBox({ message: process.argv.join("\n"), buttons: ["OK"] })
       */
    }
+
+
+  const shouldShowSettings = args.includes("/s") || args.find(arg => arg.startsWith("/c"))
 
    const mainWindow = new BrowserWindow({
       show: false,
@@ -44,10 +61,7 @@ app.on("ready", () =>
       webPreferences: { 
          sandbox: false, 
          preload: path.join(__dirname, "preload.js"),
-         additionalArguments: (process.argv[1] === "/S") || process.argv[1]?.match(/^\/c/)
-            ? ["--show-settings"]
-            : []
-         , 
+         additionalArguments: shouldShowSettings ? ["--show-settings"] : [],
       },
    })
 
