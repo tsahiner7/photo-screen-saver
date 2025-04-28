@@ -10,7 +10,7 @@ import localforage from "localforage"
 import Button from "react-bootstrap/Button"
 import Modal from "react-bootstrap/Modal"
 
-function StaticExample() {
+function SettingsModal() {
   return (
     <div
       className="modal show"
@@ -127,7 +127,7 @@ export function App()
       >
          {
             showSettings
-               ? <StaticExample />
+               ? <SettingsModal />
                : <SHOW_COMPONENT/>
          }
       </div>
