@@ -38,6 +38,8 @@ app.on("ready", () =>
    }
 
    const mainWindow = new BrowserWindow({
+      width: 600,
+      height: 300,
       show: false,
       autoHideMenuBar: true,
       backgroundColor: "#000",
@@ -56,7 +58,7 @@ app.on("ready", () =>
    setTimeout(() => 
    {
       mainWindow!.loadFile("index.html")
-      mainWindow!.webContents.openDevTools()
+      // mainWindow!.webContents.openDevTools()
 
       // mainWindow!.setKiosk(true)
       // mainWindow!.setAlwaysOnTop(true)

@@ -7,6 +7,32 @@ import { DemoShader } from "./demoShader"
 import { DemoThreeJs } from "./demoThreeJs"
 import styles from "./app.module.scss"
 import localforage from "localforage"
+import Button from "react-bootstrap/Button"
+import Modal from "react-bootstrap/Modal"
+
+function StaticExample() {
+  return (
+    <div
+      className="modal show"
+      style={{ display: "block", position: "initial" }}
+    >
+      <Modal.Dialog>
+        <Modal.Header closeButton>
+          <Modal.Title>Modal title</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>Modal body text goes here.</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary">Close</Button>
+          <Button variant="primary">Save changes</Button>
+        </Modal.Footer>
+      </Modal.Dialog>
+    </div>
+  )
+}
 
 // Choose the component you want to display in the screen saver:
 type ShowComponent = typeof PhotoSlideshow | typeof DemoCanvas | typeof DemoCss | typeof DemoShader | typeof DemoThreeJs
@@ -83,13 +109,25 @@ export function App()
          ref={refRoot}
          className={styles.root}
          tabIndex={-1}
-         onClick={e => closeWindow()}
-         onKeyDown={e => closeWindow()}
-         onMouseMove={onMouseMove}
+         onClick={
+            showSettings
+               ? e => {}
+               : e => closeWindow()
+         }
+         onKeyDown={
+            showSettings
+            ? e => {}
+            : e => closeWindow()
+         }
+         onMouseMove={
+            showSettings
+            ? () => {}
+            : onMouseMove
+         }
       >
          {
             showSettings
-               ? <h1 style={{ backgroundColor: "yellow", color: "black"}}>Settings Modal Here</h1>
+               ? <StaticExample />
                : <SHOW_COMPONENT/>
          }
       </div>
