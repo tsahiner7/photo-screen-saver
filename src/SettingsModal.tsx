@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Modal, Button, Form } from "react-bootstrap"
+import { Modal, Button, Form, Row, Col } from "react-bootstrap"
 import localforage from "localforage"
 
 interface SettingsModalProps {
@@ -58,23 +58,35 @@ const handleChooseFolder = async () => {
   return (
     <Modal show={show} onHide={handleClose} centered backdrop="static">
       <Modal.Header closeButton>
-        <Modal.Title>Screen Saver Options</Modal.Title>
+        <Modal.Title>Screen Saver Settings</Modal.Title>
       </Modal.Header>
+
       <Modal.Body>
-        <p>This screen saver has no options that you can set except the folder path.</p>
-        <Form.Group>
-          <Form.Label>New Folder Path:</Form.Label>
-          <Form.Control
-            type="text"
-            value={newChosenFolder}
-            readOnly
-            placeholder="No folder selected"
-          />
+        <p className="text-muted mb-4">
+          Select a folder to use for your screen saver images.
+        </p>
+
+        <Form.Group as={Row} className="align-items-center mb-3">
+          <Form.Label column sm="4">
+            Folder Path:
+          </Form.Label>
+          <Col sm="8">
+            <Form.Control
+              type="text"
+              value={newChosenFolder || ""}
+              placeholder="No folder selected"
+              readOnly
+            />
+          </Col>
         </Form.Group>
-        <Button className="mt-3" onClick={handleChooseFolder}>
-          Choose Folder...
-        </Button>
+
+        <div className="d-flex justify-content-end">
+          <Button variant="primary" onClick={handleChooseFolder}>
+            Choose Folder...
+          </Button>
+        </div>
       </Modal.Body>
+
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
           OK
