@@ -37,7 +37,10 @@ app.on("ready", () =>
       */
    }
 
+   const showSettings = (process.argv[1] === "/S") || process.argv[1]?.match(/^\/c/)
+
    const mainWindow = new BrowserWindow({
+      // Width and height for setting, ignored if Kiosk mode!
       width: 600,
       height: 300,
       show: false,
@@ -46,7 +49,7 @@ app.on("ready", () =>
       webPreferences: { 
          sandbox: false, 
          preload: path.join(__dirname, "preload.js"),
-         additionalArguments: (process.argv[1] === "/S") || process.argv[1]?.match(/^\/c/)
+         additionalArguments: showSettings
             ? ["--show-settings"]
             : []
          , 
@@ -60,7 +63,9 @@ app.on("ready", () =>
       mainWindow!.loadFile("index.html")
       // mainWindow!.webContents.openDevTools()
 
-      // mainWindow!.setKiosk(true)
+      if (!showSettings) {
+         mainWindow!.setKiosk(true)
+      }
       // mainWindow!.setAlwaysOnTop(true)
       mainWindow!.show()
    }, 3000)
