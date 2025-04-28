@@ -26,8 +26,25 @@ function SettingsModal() {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary">Close</Button>
-          <Button variant="primary">Save changes</Button>
+          <Button 
+            variant="primary"
+            onClick={
+               async () => {
+
+                  const storedPath = await localforage.getItem<string>("folderPath") ?? ""
+   
+                  const newPath = (storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures")
+                     ? "C:/Users/t-ste/Pictures/For Screensaver Testing"
+                     : "C:/Users/t-ste/Downloads/Bing Daily Pictures"
+                   
+                  await localforage.setItem("folderPath", newPath)
+                  
+                  closeWindow()
+               }
+            }
+          >
+            Save
+          </Button>
         </Modal.Footer>
       </Modal.Dialog>
     </div>
@@ -59,31 +76,10 @@ export function App()
    },
    [])
 
-   useEffect(() => {
-
-      const changeFolder = async () => {
-         const shouldShowSettings = window.api.shouldShowSettings()
-
-         if (shouldShowSettings) {
-
-            // Update some local state that we are showingSettings...
-            setShowSettings(true)
-
-            const storedPath = await localforage.getItem<string>("folderPath") ?? ""
-   
-            const newPath = (storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures")
-               ? "C:/Users/t-ste/Pictures/For Screensaver Testing"
-               : "C:/Users/t-ste/Downloads/Bing Daily Pictures"
-             
-             await localforage.setItem("folderPath", newPath)
-
-            //  closeWindow()
-         }
-      }
-
-      changeFolder()      
-   },
-   [])
+   useEffect(
+      () => setShowSettings(window.api.shouldShowSettings()),
+      []
+   )
 
    function onMouseMove(
       e: React.MouseEvent<HTMLDivElement>)
