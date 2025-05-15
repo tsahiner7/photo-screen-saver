@@ -1,9 +1,16 @@
-import { app, BrowserWindow } from "electron"
+import { app, BrowserWindow, ipcMain, dialog } from "electron"
 import path from "path"
 
 // When running in true screen saver mode, the Chromium GPU process crashes for some reason.
 // We work around this problem by specifying this flag to run the GPU thread in-process.
 app.commandLine.appendSwitch("in-process-gpu")
+
+ipcMain.handle("show-folder-dialog", async () => {
+   const result = await dialog.showOpenDialog({
+      properties: ["openDirectory"]
+   })
+   return result.canceled ? null : result.filePaths[0]
+})
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () =>

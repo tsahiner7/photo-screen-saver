@@ -18,35 +18,28 @@ function SettingsModal() {
     >
       <Modal.Dialog>
         <Modal.Header closeButton>
-          <Modal.Title>Modal title</Modal.Title>
+          <Modal.Title>Select a Photo Folder</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          <p>Modal body text goes here.</p>
+          <p>Choose the folder that contains your slideshow images.</p>
         </Modal.Body>
 
         <Modal.Footer>
-          <Button 
-            variant="primary"
-            onClick={
-               async () => {
-
-                  const fs = window.require?.("fs") 
-                  let storedPath = await localforage.getItem<string>("folderPath") ?? ""
-
-                  if (!fs || !fs.existsSync || !fs.existsSync(storedPath)) {
-                     // If the path doesn't exist, use fallback
-                     storedPath = "C:/Users/t-ste/Pictures/For Screensaver Testing"
-                     console.warn("Folder path was invalid or missing. Resetting to fallback.")
-                  }
-
-                  await localforage.setItem("folderPath", storedPath)
-                  closeWindow()
+         <Button
+               variant="primary"
+               onClick={async () => {
+               const selectedPath = await window.api.showFolderDialog()
+               if (selectedPath) {
+                  await localforage.setItem("folderPath", selectedPath)
+                  window.location.reload() // or trigger re-render if you want dynamic reload
+               } else {
+                  console.warn("No folder selected.")
                }
-            }
-          >
-            Save
-          </Button>
+               }}
+            >
+               Pick Folder & Start
+            </Button>
         </Modal.Footer>
       </Modal.Dialog>
     </div>
@@ -61,6 +54,7 @@ declare global {
    interface Window {
       api: {
          shouldShowSettings: () => boolean
+         showFolderDialog: () => Promise<string | null>
       }
    }
 }
