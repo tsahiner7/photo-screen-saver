@@ -15,6 +15,11 @@ function getLocalPhotos(folderPath: string): Photo[]
    if(!folderPath.endsWith("/"))
       folderPath += "/"
 
+   if (!fs.existsSync(folderPath)) {
+      console.warn("Invalid photo folder path:", folderPath)
+      return [] // return an empty list instead of crashing
+   }
+
    const fileNames = fs.readdirSync(folderPath)
 
    const photos = fileNames

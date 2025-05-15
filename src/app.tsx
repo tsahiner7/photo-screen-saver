@@ -31,14 +31,16 @@ function SettingsModal() {
             onClick={
                async () => {
 
-                  const storedPath = await localforage.getItem<string>("folderPath") ?? ""
-   
-                  const newPath = (storedPath === "C:/Users/t-ste/Downloads/Bing Daily Pictures")
-                     ? "C:/Users/t-ste/Pictures/For Screensaver Testing"
-                     : "C:/Users/t-ste/Downloads/Bing Daily Pictures"
-                   
-                  await localforage.setItem("folderPath", newPath)
-                  
+                  const fs = window.require?.("fs") 
+                  let storedPath = await localforage.getItem<string>("folderPath") ?? ""
+
+                  if (!fs || !fs.existsSync || !fs.existsSync(storedPath)) {
+                     // If the path doesn't exist, use fallback
+                     storedPath = "C:/Users/t-ste/Pictures/For Screensaver Testing"
+                     console.warn("Folder path was invalid or missing. Resetting to fallback.")
+                  }
+
+                  await localforage.setItem("folderPath", storedPath)
                   closeWindow()
                }
             }
