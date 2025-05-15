@@ -7,10 +7,11 @@ import { Photo } from "./photo"
 import styles from "./photoSlideshow.module.scss"
 import { getUnsplashPhotos } from "./unsplashPhotos"
 import { closeWindow, delay, getRandom, shuffle } from "./utils"
+import localforage from "localforage"
 
 // Choose the source for the photos you want to display:
 type GetPhotosFn = typeof getFlickrPhotos | typeof getUnsplashPhotos | typeof getLocalPhotos
-const GET_PHOTOS: GetPhotosFn = getUnsplashPhotos
+const GET_PHOTOS: GetPhotosFn = getLocalPhotos
 
 // Keep these in sync with photoSlideshow.module.scss:
 const PHOTO_INTERVAL = 60
@@ -28,12 +29,18 @@ export function PhotoSlideshow()
    {
       async function load()
       {
+        const storedPath = await localforage.getItem<string>("folderPath") ?? ""
+
+        if (storedPath.length === 0)
+            return
+
          try
          {
-            const photos = await GET_PHOTOS()
+            const photos = await GET_PHOTOS(storedPath)
 
             if(photos.length === 0)
-               throw new Error("No photos found that meet criteria.")
+              //throw new Error("No photos found that meet criteria.")
+              return 
 
             console.log(`${photos.length} photos found that meet criteria`)
 
